@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_repository": "Badgerk1/tinforge",
   "source_branch": "main",
   "source_directory": "real_survey_data",
@@ -8,8 +8,26 @@
       "name": "Purolator NP 2026.tp3",
       "path": "real_survey_data/Purolator NP 2026.tp3",
       "git_blob_sha1": "5667f26aa160bf00735d6c08f0cde21c49633bb3",
+      "sha256": "423926032d368d2ebce9ffa9acfba3c5e467f200a13b1470d214962b45cb3207",
       "size_bytes": 446650,
-      "role": "professional golden TP3"
+      "role": "professional golden TP3",
+      "verified_binary_observations": {
+        "signature": "Topcon TP3",
+        "project_name_utf16le_offset": 30,
+        "surface_name": "design grade",
+        "surface_name_utf16le_offset": 433778,
+        "vertex_count": 53,
+        "vertex_count_u16le_offset": 433766,
+        "triangle_count": 76,
+        "triangle_count_u16le_offset": 433770,
+        "triangle_topology_offset": 431906,
+        "triangle_record_count": 76,
+        "triangle_record_size_bytes": 24,
+        "triangle_record_layout": "six little-endian int32 values: three local vertex indices followed by three neighboring-triangle indices; -1 marks a boundary neighbor",
+        "triangle_vertex_index_range": [0, 52],
+        "triangle_neighbor_index_range": [-1, 75],
+        "boundary_neighbor_slots": 28
+      }
     },
     {
       "name": "63287_001-C1.1 -R1.pdf",
@@ -34,5 +52,5 @@
     "triangles": 76,
     "layers": 7
   },
-  "note": "Git blob SHA-1 identifies repository blob content but is not a raw-file SHA-256. Run tools/inventory_reference.py on checked-out fixtures to produce raw SHA-256 before acceptance testing."
+  "note": "Raw SHA-256 and surface topology observations were independently verified from the user-supplied professional binary on 2026-09-17. Coordinate XYZ storage remains under investigation."
 }
