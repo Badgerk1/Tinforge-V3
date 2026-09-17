@@ -1,0 +1,27 @@
+{
+  "file": "Purolator NP 2026.tp3",
+  "size_bytes": 446650,
+  "sha256": "423926032d368d2ebce9ffa9acfba3c5e467f200a13b1470d214962b45cb3207",
+  "evidence": {
+    "project_name": {
+      "encoding": "utf-16le",
+      "text": "Purolator NP 2026",
+      "offset_note": "printable extraction begins at byte 28 with a preceding marker; project text itself begins at byte 30"
+    },
+    "surface": {
+      "name": "design grade",
+      "name_encoding": "utf-16le",
+      "name_offset": 433778,
+      "count_header_offset": 433766,
+      "vertex_count": 53,
+      "triangle_count": 76,
+      "count_encoding": "little-endian signed 32-bit integers",
+      "confidence": "VERIFIED"
+    }
+  },
+  "notes": [
+    "The adjacent 53 and 76 values are physically embedded immediately before the design grade surface-name field, independently confirming the previously reported surface counts.",
+    "Integer/index-like data immediately preceding the surface record includes values in triangle-index range and -1 sentinels. Its exact semantics are not yet assigned.",
+    "Do not label nearby UTF-16 strings as layers without independent evidence; names such as cc22 and sib1 may be point/code records rather than layer records."
+  ]
+}
