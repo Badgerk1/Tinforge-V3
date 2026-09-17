@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "source_repository": "Badgerk1/tinforge",
+  "source_branch": "main",
+  "source_directory": "real_survey_data",
+  "files": [
+    {
+      "name": "Purolator NP 2026.tp3",
+      "path": "real_survey_data/Purolator NP 2026.tp3",
+      "git_blob_sha1": "5667f26aa160bf00735d6c08f0cde21c49633bb3",
+      "size_bytes": 446650,
+      "role": "professional golden TP3"
+    },
+    {
+      "name": "63287_001-C1.1 -R1.pdf",
+      "path": "real_survey_data/63287_001-C1.1 -R1.pdf",
+      "git_blob_sha1": "6e4aba964e8c76b36a9950030a40f83163c86302",
+      "size_bytes": 4569922,
+      "role": "source project drawing"
+    },
+    {
+      "name": "63287_002-TB1-ElevationsOn-24x30-Horiz-Topo.pdf",
+      "path": "real_survey_data/63287_002-TB1-ElevationsOn-24x30-Horiz-Topo.pdf",
+      "git_blob_sha1": "dc8c96cd9c156c1d2e2202e0e2aae8180caa7e92",
+      "size_bytes": 797729,
+      "role": "source topo/elevation drawing"
+    }
+  ],
+  "expected_observations_to_reverify": {
+    "units": "metric",
+    "crs": "MTM Zone 10 / NAD83(CSRS v7)",
+    "surface": "design grade",
+    "vertices": 53,
+    "triangles": 76,
+    "layers": 7
+  },
+  "note": "Git blob SHA-1 identifies repository blob content but is not a raw-file SHA-256. Run tools/inventory_reference.py on checked-out fixtures to produce raw SHA-256 before acceptance testing."
+}
