@@ -1,6 +1,11 @@
+import os
+from pathlib import Path
+
 import pytest
 
 from tinforge.surface import SurfaceTIN, SurfaceVertex, build_triangle_adjacency
+
+GOLDEN_TP3_ENV = "TINFORGE_GOLDEN_TP3_PATH"
 
 
 @pytest.fixture
@@ -24,4 +29,22 @@ def tiny_surface() -> SurfaceTIN:
         origin_y=4843987.442024235,
         vertices=vertices,
         triangles=triangles,
+    )
+
+
+@pytest.fixture(scope="session")
+def original_professional_tp3_bytes() -> bytes:
+    configured_path = os.environ.get(GOLDEN_TP3_ENV, "").strip()
+    candidate_paths = [
+        Path(configured_path) if configured_path else None,
+        Path("/tmp/Purolator_NP_2026.tp3"),
+        Path("/tmp/inputs/Purolator NP 2026.tp3"),
+        Path("/tmp/inputs/Purolator_NP_2026.tp3"),
+    ]
+    for path in candidate_paths:
+        if path is not None and path.is_file():
+            return path.read_bytes()
+    pytest.skip(
+        "Original professional TP3 fixture not found. "
+        f"Set {GOLDEN_TP3_ENV} to the authentic 'Purolator NP 2026.tp3' path."
     )

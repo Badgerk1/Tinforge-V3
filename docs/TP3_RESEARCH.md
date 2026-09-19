@@ -59,5 +59,30 @@ B) Verified civil interchange (LandXML/MAXML where supported) followed by a veri
 
 Both require post-export validation.
 
+## Stage 3 independent original-byte verification — 2026-09-19
+Using the original professional `Purolator NP 2026.tp3` bytes (not the derived JSON fixture):
+
+- Vertex block bytes `380120:381392` are exactly `1272` bytes (`53 * 24`).
+- Decoding all 53 records as little-endian `<3d` (`local_x, local_y, elevation_z`) and then re-encoding those same 53 records reproduces exact byte-for-byte equality with the source block.
+- Vertex block SHA-256: `045e128e0b7774a819e434055e0fc3d75d3b7b168b259df5283895e7cbbfa08a`.
+
+From original triangle bytes:
+
+- Triangle table starts at `431906`, with `76` records of `24` bytes each (`<6i`).
+- Verified from geometric/topologic reconstruction: `V=53`, `F=76`, `E=128`, boundary edges `=28`, Euler `V-E+F=1`.
+- All triangle vertex indexes are valid (`0..52`), all 53 vertices are referenced, there are no zero/near-zero triangles under Tinforge XY area tolerance, and no non-manifold edges.
+- Reciprocal adjacency is valid, and every stored neighbor index maps to the geometrically correct shared edge.
+
+Counts/metadata checks from original bytes:
+
+- `uint32LE @ 433766 == 53`
+- `uint32LE @ 433770 == 76`
+- `float64LE @ 433908 == 295399.97869873`
+- `float64LE @ 433916 == 4843987.442024235`
+
+The two doubles above are currently classified as **SUPPORTED HYPOTHESIS** for surface/project origin semantics; the structural relationship is not yet proven strongly enough to mark VERIFIED.
+
 ## Open questions
-The major next target is the 53-entry XYZ coordinate storage referenced by the now-verified topology table. After XYZ is mapped, validate triangle geometry, neighbor edge ordering, surface bounds/elevation range, then continue with CRS/localization representation, breaklines/boundaries, layers/features, checksums/object IDs/cross-reference tables, compatibility among Pocket3D/3D-MC/MC-X versions, and safe LandXML/MAXML round-trip behavior.
+- Structural proof of the enclosing TP3 surface/container records around the verified vertex/triangle/count blocks.
+- Definitive semantic proof that doubles at `433908` and `433916` are the actual surface/project origin fields (currently SUPPORTED HYPOTHESIS).
+- Remaining unknown TP3 object/link/checksum/table structures required for complete native TP3 serialization.

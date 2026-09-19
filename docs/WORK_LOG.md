@@ -47,3 +47,41 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 - Exact surface vertex XYZ storage layout in the golden TP3.
 - Exact enclosing surface/container record boundaries and byte layout around the verified triangle table.
 - Exact semantic mapping for surrounding TP3 metadata needed before a complete native TP3 file can be emitted safely.
+
+## 2026-09-19 — Stage 3 original-byte surface verification
+### Code changes
+- Added `src/tinforge/tp3/surface_decoding.py` with deterministic original-byte decoding/verification for:
+  - vertex block at `380120:381392` (`53 * 24` bytes, `<3d`);
+  - triangle block at `431906` (`76 * 24` bytes, `<6i`);
+  - `uint32LE` count reads at `433766` and `433770`;
+  - double reads at `433908` and `433916` (kept as hypothesis-level semantics).
+- Added `tests/test_tp3_surface_stage3.py` to validate required Stage 3 assertions from the original professional TP3 bytes, including exact vertex-byte round-trip and geometric neighbor-edge correctness.
+- Added `original_professional_tp3_bytes` session fixture in `tests/conftest.py` to load the authentic TP3 from `TINFORGE_GOLDEN_TP3_PATH` (or known local fallback paths).
+- Updated `tests/fixtures/golden/REFERENCE_MANIFEST.json` with verified vertex block fields and corrected count-header key names to `*_u32le_offset`.
+
+### Evidence/results
+- Original file SHA-256 confirmed: `423926032d368d2ebce9ffa9acfba3c5e467f200a13b1470d214962b45cb3207`.
+- Vertex block SHA-256 (`380120:381392`): `045e128e0b7774a819e434055e0fc3d75d3b7b168b259df5283895e7cbbfa08a`.
+- Exact decode/re-encode byte equality for all 53 `<3d` vertex records: PASS.
+- TIN reconstruction from original bytes proves:
+  - `V=53`, `F=76`, `E=128`, boundary edges `=28`, Euler `=1`;
+  - valid triangle indexes and all vertices used;
+  - no zero/near-zero triangles;
+  - no non-manifold edges;
+  - reciprocal adjacency and geometric neighbor-edge correspondence.
+- Header checks from original bytes:
+  - `uint32LE @ 433766 = 53`
+  - `uint32LE @ 433770 = 76`
+- Candidate doubles read:
+  - `float64LE @ 433908 = 295399.97869873`
+  - `float64LE @ 433916 = 4843987.442024235`
+  - semantic role remains **SUPPORTED HYPOTHESIS**, not VERIFIED.
+
+### Tests
+- `TINFORGE_GOLDEN_TP3_PATH=/tmp/Purolator_NP_2026.tp3 python -m pytest`
+- Result: `29 passed`.
+
+### Remaining UNKNOWN structures
+- Exact enclosing TP3 surface/container record structure outside the verified vertex/triangle/count blocks.
+- Definitive structural proof that doubles at `433908` and `433916` are canonical surface/project origin fields.
+- Remaining TP3 container/object-link/checksum structures required for safe complete native TP3 serialization.

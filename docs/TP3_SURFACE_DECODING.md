@@ -7,25 +7,46 @@ Size: 446650 bytes
 
 ## Verified count anchor
 
-Byte-level inspection has now independently located the expected surface counts immediately before the UTF-16LE surface name `design grade`.
+Independent reads from the original professional bytes show:
 
-Offsets (zero-based):
+- decimal `433766`: `uint32LE = 53`
+- decimal `433770`: `uint32LE = 76`
+- decimal `433778`: UTF-16LE `design grade` surface name begins
 
-- `0x069E64` / decimal 433764: little-endian uint32 = **53**
-- `0x069E68` / decimal 433768: little-endian uint32 = **76**
-- `0x069E72` / decimal 433778: UTF-16LE string begins: **design grade**
+This directly ties the verified `53`-vertex / `76`-triangle counts to the `design grade` surface record context.
 
-This is direct binary evidence tying the previously reported 53-vertex / 76-triangle counts to the `design grade` surface record. These values are no longer merely prior observations.
+## Verified vertex and topology evidence from original bytes
 
-## Nearby topology evidence
+- Vertex block: `380120:381392` (exactly `1272` bytes = `53 * 24`)
+- Vertex record layout: little-endian `<3d` (`local_x, local_y, elevation_z`)
+- Exact byte round-trip: decode 53 records and re-encode => byte-for-byte equality with original block
+- Vertex block SHA-256: `045e128e0b7774a819e434055e0fc3d75d3b7b168b259df5283895e7cbbfa08a`
 
-The bytes immediately preceding the surface header contain long runs of small integer values plus `0xFFFF` sentinels. The values are consistent with index/topology data, but their exact field semantics and record width are not yet proven. Do not label these as triangle connectivity until the parser reproduces all 76 triangles and all references validate against the 53-vertex set.
+Triangle table:
 
-## Coordinate evidence
+- starts at `431906`
+- `76` records of `24` bytes each, layout `<6i` (`v0,v1,v2,n0,n1,n2`)
+- all vertex indexes valid and all 53 vertices used
+- reciprocal neighbor topology valid and each stored neighbor corresponds to the geometrically correct shared edge
+- reconstructed TIN metrics: `V=53`, `F=76`, `E=128`, boundary edges `=28`, Euler `=1`
+- no zero/near-zero XY triangles and no non-manifold edges
 
-A nearby region beginning around decimal offset 426880 contains repeated IEEE-754 little-endian doubles in realistic project-coordinate ranges, including northings around 4,844,234 and eastings around 295,315. The surrounding bytes are structured and repeat, but the complete XYZ record layout is not yet proven.
+## Origin-candidate doubles
 
-## Acceptance gate for Stage 1
+Read directly from original bytes:
+
+- `float64LE @ 433908 = 295399.97869873`
+- `float64LE @ 433916 = 4843987.442024235`
+
+Interpretation as actual surface/project origin remains **SUPPORTED HYPOTHESIS**, not VERIFIED, until structural linkage is proven.
+
+## Remaining UNKNOWNs
+
+- Exact enclosing TP3 container structure around the verified surface blocks.
+- Definitive field-level proof for origin semantics at `433908`/`433916`.
+- Additional unknown TP3 structures required for complete native TP3 emission.
+
+## Acceptance gate for Stage 3
 
 Stage 1 surface decoding is complete only when code can deterministically:
 
@@ -36,4 +57,4 @@ Stage 1 surface decoding is complete only when code can deterministically:
 5. reject truncated/corrupt variants safely; and
 6. reproduce these facts in automated golden-file tests.
 
-Current status: **in progress**. The surface count anchor is verified; vertex and topology record layouts remain under investigation.
+Current status: **in progress**. Vertex/triangle/count decoding and topology checks are now verified from original bytes; container semantics outside those verified blocks remain UNKNOWN.
