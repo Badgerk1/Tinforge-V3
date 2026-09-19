@@ -138,9 +138,6 @@ def validate_triangle_topology(
     if not triangles:
         raise TINValidationError("surface must contain at least one triangle")
 
-    raw_triangles = tuple(triangle.vertices for triangle in triangles)
-    edge_map = _build_edge_map(raw_triangles)
-
     for triangle_index, triangle in enumerate(triangles):
         _validate_vertex_indexes(triangle.vertices, vertex_count, triangle_index)
         for neighbor_index in triangle.neighbors:
@@ -148,6 +145,9 @@ def validate_triangle_topology(
                 raise TINValidationError(
                     f"triangle {triangle_index} references invalid neighbor {neighbor_index}"
                 )
+
+    raw_triangles = tuple(triangle.vertices for triangle in triangles)
+    edge_map = _build_edge_map(raw_triangles)
 
     for edge_key, references in edge_map.items():
         if len(references) == 1:

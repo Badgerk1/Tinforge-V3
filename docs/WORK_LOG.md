@@ -37,11 +37,11 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 - Added canonical `SurfaceTIN`, `SurfaceVertex`, and `SurfaceTriangle` dataclasses in `src/tinforge/surface.py`.
 - Added deterministic triangle-adjacency generation with explicit non-manifold rejection.
 - Strengthened `validate_tin()` so every interior edge must have reciprocal neighbor references on both triangles, boundary edges must keep `-1`, invalid indexes fail fast, and XY degeneracy uses a documented scale-aware absolute twice-area tolerance instead of exact `== 0.0`.
-- Added `src/tinforge/tp3/writer.py` with verified 24-byte triangle-record serialization/parsing only; generated triangle-record reparsing now rejects invalid vertex/neighbor indexes and invalid neighbor topology, and full TP3 serialization still fails closed at the first UNKNOWN field.
+- Added `src/tinforge/tp3/writer.py` with verified 24-byte triangle-record serialization/parsing only; generated triangle-record reparsing now rejects invalid vertex/neighbor indexes, duplicate vertex indexes, and invalid neighbor topology, and full TP3 serialization still fails closed at the first UNKNOWN field.
 
 ### Tests
 - Added synthetic Stage 2 fixture coverage plus negative regression tests for missing neighbors, wrong neighbors, non-reciprocal neighbors, incorrect-edge neighbors, degenerate/near-degenerate triangles, invalid indexes, malformed triangle-record reparsing, and non-manifold geometry.
-- Full suite result: `python -m pytest -vv` -> 22 passed.
+- Full suite result: `python -m pytest -vv` -> 23 passed.
 
 ### Remaining UNKNOWN TP3 fields
 - Exact surface vertex XYZ storage layout in the golden TP3.

@@ -44,6 +44,12 @@ def test_parse_triangle_records_rejects_invalid_indexes():
         parse_triangle_records(bad_neighbor, vertex_count=4)
 
 
+def test_parse_triangle_records_rejects_duplicate_vertex_indexes():
+    record = TRIANGLE_RECORD_STRUCT.pack(0, 1, 1, -1, -1, -1)
+    with pytest.raises(ValueError, match="reuses a vertex index"):
+        parse_triangle_records(record, vertex_count=4)
+
+
 def test_parse_triangle_records_rejects_invalid_topology():
     data = b"".join(
         (
