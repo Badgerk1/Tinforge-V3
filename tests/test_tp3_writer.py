@@ -44,6 +44,17 @@ def test_parse_triangle_records_rejects_invalid_indexes():
         parse_triangle_records(bad_neighbor, vertex_count=4)
 
 
+def test_parse_triangle_records_rejects_invalid_topology():
+    data = b"".join(
+        (
+            TRIANGLE_RECORD_STRUCT.pack(0, 1, 2, -1, -1, -1),
+            TRIANGLE_RECORD_STRUCT.pack(0, 2, 3, 0, -1, -1),
+        )
+    )
+    with pytest.raises(ValueError, match="missing reciprocal neighbor"):
+        parse_triangle_records(data, vertex_count=4)
+
+
 def test_serialize_tp3_fails_closed_on_unknown_fields(tiny_surface: SurfaceTIN):
     with pytest.raises(UnknownTP3FieldError, match="UNKNOWN TP3 field"):
         serialize_tp3(tiny_surface)

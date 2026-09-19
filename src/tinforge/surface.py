@@ -109,6 +109,8 @@ def validate_tin(surface: SurfaceTIN, *, area_tolerance: float | None = None) ->
         if not (isfinite(vertex.x) and isfinite(vertex.y) and isfinite(vertex.z)):
             raise TINValidationError(f"vertex {vertex_index} must contain only finite coordinates")
 
+    validate_triangle_topology(len(surface.vertices), surface.triangles)
+
     resolved_area_tolerance = (
         xy_area_tolerance(surface.vertices)
         if area_tolerance is None
@@ -117,17 +119,7 @@ def validate_tin(surface: SurfaceTIN, *, area_tolerance: float | None = None) ->
     if resolved_area_tolerance < 0.0:
         raise TINValidationError("area tolerance must be non-negative")
 
-    raw_triangles = tuple(triangle.vertices for triangle in surface.triangles)
-    edge_map = _build_edge_map(raw_triangles)
-
     for triangle_index, triangle in enumerate(surface.triangles):
-        _validate_vertex_indexes(triangle.vertices, len(surface.vertices), triangle_index)
-        for neighbor_index in triangle.neighbors:
-            if neighbor_index != BOUNDARY_NEIGHBOR and not 0 <= neighbor_index < len(surface.triangles):
-                raise TINValidationError(
-                    f"triangle {triangle_index} references invalid neighbor {neighbor_index}"
-                )
-
         twice_area = abs(triangle_twice_area_xy(surface.vertices, triangle))
         if twice_area <= resolved_area_tolerance:
             raise TINValidationError(
@@ -136,10 +128,31 @@ def validate_tin(surface: SurfaceTIN, *, area_tolerance: float | None = None) ->
                 f"(abs(twice_area)={twice_area:.3e}, tolerance={resolved_area_tolerance:.3e})"
             )
 
+
+def validate_triangle_topology(
+    vertex_count: int,
+    triangles: tuple[SurfaceTriangle, ...],
+) -> None:
+    if vertex_count <= 0:
+        raise TINValidationError("surface must contain at least one vertex")
+    if not triangles:
+        raise TINValidationError("surface must contain at least one triangle")
+
+    raw_triangles = tuple(triangle.vertices for triangle in triangles)
+    edge_map = _build_edge_map(raw_triangles)
+
+    for triangle_index, triangle in enumerate(triangles):
+        _validate_vertex_indexes(triangle.vertices, vertex_count, triangle_index)
+        for neighbor_index in triangle.neighbors:
+            if neighbor_index != BOUNDARY_NEIGHBOR and not 0 <= neighbor_index < len(triangles):
+                raise TINValidationError(
+                    f"triangle {triangle_index} references invalid neighbor {neighbor_index}"
+                )
+
     for edge_key, references in edge_map.items():
         if len(references) == 1:
             reference = references[0]
-            neighbor_index = surface.triangles[reference.triangle_index].neighbors[reference.edge_index]
+            neighbor_index = triangles[reference.triangle_index].neighbors[reference.edge_index]
             if neighbor_index != BOUNDARY_NEIGHBOR:
                 raise TINValidationError(
                     f"boundary edge {edge_key} on triangle {reference.triangle_index} must use neighbor -1"
@@ -147,8 +160,8 @@ def validate_tin(surface: SurfaceTIN, *, area_tolerance: float | None = None) ->
             continue
 
         left, right = references
-        left_neighbor = surface.triangles[left.triangle_index].neighbors[left.edge_index]
-        right_neighbor = surface.triangles[right.triangle_index].neighbors[right.edge_index]
+        left_neighbor = triangles[left.triangle_index].neighbors[left.edge_index]
+        right_neighbor = triangles[right.triangle_index].neighbors[right.edge_index]
         if left_neighbor == BOUNDARY_NEIGHBOR or right_neighbor == BOUNDARY_NEIGHBOR:
             raise TINValidationError(
                 f"shared edge {edge_key} is missing reciprocal neighbor references"

@@ -3,7 +3,12 @@ from __future__ import annotations
 import struct
 from dataclasses import dataclass
 
-from tinforge.surface import SurfaceTIN, SurfaceTriangle, validate_tin
+from tinforge.surface import (
+    SurfaceTIN,
+    SurfaceTriangle,
+    validate_tin,
+    validate_triangle_topology,
+)
 
 TRIANGLE_RECORD_STRUCT = struct.Struct("<6i")
 UNKNOWN_VERTEX_LAYOUT_EVIDENCE = (
@@ -75,6 +80,16 @@ def parse_triangle_records(
                 raise ValueError(
                     f"triangle record {record_index} references invalid neighbor {neighbor_index}"
                 )
+    validate_triangle_topology(
+        vertex_count,
+        tuple(
+            SurfaceTriangle(
+                vertices=(record.vertex_0, record.vertex_1, record.vertex_2),
+                neighbors=(record.neighbor_0, record.neighbor_1, record.neighbor_2),
+            )
+            for record in records
+        ),
+    )
     return records
 
 
