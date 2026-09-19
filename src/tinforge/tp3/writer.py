@@ -51,7 +51,7 @@ def triangle_records_from_surface(surface: SurfaceTIN) -> tuple[TP3TriangleRecor
     validate_tin(surface)
     records = tuple(TP3TriangleRecord.from_triangle(triangle) for triangle in surface.triangles)
     if not records:
-        raise ValueError("surface must contain at least one triangle record")
+        raise TINValidationError("surface must contain at least one triangle record")
     return records
 
 

@@ -77,8 +77,7 @@ def test_parse_triangle_records_rejects_invalid_topology():
 
 
 def test_serialize_tp3_fails_closed_on_unknown_fields(tiny_surface: SurfaceTIN):
-    with pytest.raises(UnknownTP3FieldError, match="UNKNOWN TP3 field"):
+    with pytest.raises(UnknownTP3FieldError) as error:
         serialize_tp3(tiny_surface)
-    with pytest.raises(UnknownTP3FieldError, match="vertex XYZ storage layout"):
-        serialize_tp3(tiny_surface)
+    assert str(error.value) == UNKNOWN_VERTEX_LAYOUT_EVIDENCE
     assert "surrounding metadata" in UNKNOWN_VERTEX_LAYOUT_EVIDENCE
