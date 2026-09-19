@@ -52,9 +52,9 @@ def decode_container_header(data: bytes, offset: int) -> TP3ContainerHeader:
         raise TINValidationError(
             f"container header at {offset} reports unsupported header size {header_size}"
         )
-    if record_count < 0 or record_size_bytes < 0:
+    if record_count == 0 or record_size_bytes == 0:
         raise TINValidationError(
-            f"container header at {offset} has negative payload dimensions"
+            f"container header at {offset} has zero-length payload dimensions"
         )
 
     header = TP3ContainerHeader(
