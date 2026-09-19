@@ -16,7 +16,7 @@ def test_triangle_record_serialization_round_trips(tiny_surface: SurfaceTIN):
     data = serialize_triangle_records(tiny_surface)
     assert len(data) == len(tiny_surface.triangles) * TRIANGLE_RECORD_STRUCT.size
 
-    records = parse_triangle_records(data)
+    records = parse_triangle_records(data, vertex_count=len(tiny_surface.vertices))
     assert records == triangle_records_from_surface(tiny_surface)
 
 
@@ -28,7 +28,20 @@ def test_triangle_record_serialization_is_deterministic(tiny_surface: SurfaceTIN
 
 def test_parse_triangle_records_rejects_truncated_input():
     with pytest.raises(ValueError, match="truncated"):
-        parse_triangle_records(b"\x00" * (TRIANGLE_RECORD_STRUCT.size - 1))
+        parse_triangle_records(
+            b"\x00" * (TRIANGLE_RECORD_STRUCT.size - 1),
+            vertex_count=1,
+        )
+
+
+def test_parse_triangle_records_rejects_invalid_indexes():
+    record = TRIANGLE_RECORD_STRUCT.pack(0, 1, 99, -1, -1, -1)
+    with pytest.raises(ValueError, match="invalid vertex 99"):
+        parse_triangle_records(record, vertex_count=4)
+
+    bad_neighbor = TRIANGLE_RECORD_STRUCT.pack(0, 1, 2, -1, 4, -1)
+    with pytest.raises(ValueError, match="invalid neighbor 4"):
+        parse_triangle_records(bad_neighbor, vertex_count=4)
 
 
 def test_serialize_tp3_fails_closed_on_unknown_fields(tiny_surface: SurfaceTIN):
