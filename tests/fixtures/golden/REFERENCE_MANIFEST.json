@@ -58,5 +58,5 @@
     "triangles": 76,
     "layers": 7
   },
-  "note": "Raw SHA-256 and surface topology observations were independently verified from the user-supplied professional binary on 2026-09-17. Coordinate XYZ storage remains under investigation."
+  "note": "Raw SHA-256, the design-grade vertex block, stored local-origin doubles, and surface topology observations were independently verified from the professional golden TP3."
 }
