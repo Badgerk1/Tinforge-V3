@@ -11,7 +11,7 @@ Raw golden-file identity independently verified from the user-supplied binary:
 ## Verified surface topology discovery — 2026-09-17
 The professional file contains a surface named `design grade` as UTF-16LE beginning at byte offset 433,778.
 
-Immediately before that surface name, two little-endian uint16 values independently reproduce the expected topology counts:
+Immediately before that surface name, two little-endian uint32 values independently reproduce the expected topology counts:
 - byte 433,766: 53 vertices
 - byte 433,770: 76 triangles
 
