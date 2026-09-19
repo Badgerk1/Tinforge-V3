@@ -135,5 +135,17 @@ def test_decode_surface_region_containers_rejects_out_of_bounds_start_offset(
     with pytest.raises(TINValidationError, match="outside TP3 bounds"):
         decode_surface_region_containers(
             original_professional_tp3_bytes,
+            start_offset=len(original_professional_tp3_bytes) + 1,
+        )
+
+
+def test_decode_surface_region_containers_allows_eof_start_offset(
+    original_professional_tp3_bytes: bytes,
+):
+    assert (
+        decode_surface_region_containers(
+            original_professional_tp3_bytes,
             start_offset=len(original_professional_tp3_bytes),
         )
+        == ()
+    )

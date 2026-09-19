@@ -78,7 +78,7 @@ def decode_surface_region_containers(
     *,
     start_offset: int = SURFACE_REGION_START_OFFSET,
 ) -> tuple[TP3ContainerHeader, ...]:
-    if start_offset < 0 or start_offset >= len(data):
+    if start_offset < 0 or start_offset > len(data):
         raise TINValidationError("surface-region start offset is outside TP3 bounds")
 
     headers: list[TP3ContainerHeader] = []
