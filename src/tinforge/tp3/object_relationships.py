@@ -233,18 +233,20 @@ def analyze_stage5_object_relationships(data: bytes) -> Stage5ObjectRelationship
         ),
         ClassifiedFinding(
             subject="surface metadata to vertex geometry linkage",
-            classification="VERIFIED",
+            classification="SUPPORTED HYPOTHESIS",
             evidence=(
                 f"type-17 vertex_count={type17_metadata.vertex_count} matches verified "
-                f"vertex block record count={VERTEX_RECORD_COUNT} at offset {VERTEX_BLOCK_OFFSET}."
+                f"vertex block record count={VERTEX_RECORD_COUNT} at offset {VERTEX_BLOCK_OFFSET}, "
+                "but no explicit type-17 pointer/reference to that vertex container is proven."
             ),
         ),
         ClassifiedFinding(
             subject="surface metadata to triangle geometry linkage",
-            classification="VERIFIED",
+            classification="SUPPORTED HYPOTHESIS",
             evidence=(
                 f"type-17 triangle_count={type17_metadata.triangle_count} matches type-14 record_count "
-                f"and verified triangle block count={TRIANGLE_RECORD_COUNT}."
+                f"and verified triangle block count={TRIANGLE_RECORD_COUNT}, but no explicit type-17 "
+                "pointer/reference to type-14 ownership is proven."
             ),
         ),
         ClassifiedFinding(

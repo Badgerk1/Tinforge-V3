@@ -112,12 +112,15 @@ Using the same original professional binary (SHA-256 verified before analysis), 
 
 ### VERIFIED
 - Type-17 payload anchors are stable: vertex count (`@433766`), triangle count (`@433770`), surface name `design grade` (`@433778`) are inside the 332-byte type-17 payload.
-- Metadata-to-geometry linkage is now explicitly asserted:
+- Count consistency is explicitly asserted:
   - type-17 vertex count (`53`) matches the verified vertex block record count (`53`).
   - type-17 triangle count (`76`) matches type-14 triangle record count (`76`) and the verified triangle block.
 - Type-14 payload remains byte-identical to the verified triangle block.
 
 ### SUPPORTED HYPOTHESIS
+- Type-17 metadata ownership/linkage to specific geometry containers is not yet proven:
+  - count matches do not yet establish explicit type-17 -> vertex-container ownership/reference.
+  - count matches do not yet establish explicit type-17 -> type-14 triangle-container ownership/reference.
 - Non-sentinel container link fields in the surface-region chain:
   - `type-2.link_next = 350324`
   - `type-13.link_next = 349794`

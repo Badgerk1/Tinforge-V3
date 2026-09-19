@@ -56,11 +56,12 @@ def test_stage5_finding_classifications_cover_required_labels(
     assert by_subject["18-byte container header size"].classification == "VERIFIED"
     assert by_subject["type-14 triangle payload anchor"].classification == "VERIFIED"
     assert (
-        by_subject["surface metadata to vertex geometry linkage"].classification == "VERIFIED"
+        by_subject["surface metadata to vertex geometry linkage"].classification
+        == "SUPPORTED HYPOTHESIS"
     )
     assert (
         by_subject["surface metadata to triangle geometry linkage"].classification
-        == "VERIFIED"
+        == "SUPPORTED HYPOTHESIS"
     )
     assert (
         by_subject["container link fields as cross-region object references"].classification
@@ -79,6 +80,14 @@ def test_stage5_finding_classifications_cover_required_labels(
         == "REJECTED HYPOTHESIS"
     )
     assert "431906:433730" in by_subject["type-14 triangle payload anchor"].evidence
+    assert (
+        "no explicit type-17 pointer/reference"
+        in by_subject["surface metadata to vertex geometry linkage"].evidence
+    )
+    assert (
+        "no explicit type-17 pointer/reference"
+        in by_subject["surface metadata to triangle geometry linkage"].evidence
+    )
     assert "vertex_count@+18" in by_subject["type-17 surface metadata payload anchors"].evidence
     assert "triangle_count@+22" in by_subject["type-17 surface metadata payload anchors"].evidence
     assert "name@+30='design grade'" in by_subject["type-17 surface metadata payload anchors"].evidence

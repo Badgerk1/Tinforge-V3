@@ -120,9 +120,10 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 - Updated `docs/TP3_RESEARCH.md` and `docs/TP3_CONTAINER_MAP.md` with Stage-5 differential conclusions.
 
 ### Evidence/results
-- Metadata linkage now explicitly proven from bytes:
+- Count consistency is explicitly proven from bytes:
   - type-17 `vertex_count=53` matches verified vertex block count;
   - type-17 `triangle_count=76` matches verified type-14/triangle block count.
+- Explicit type-17 ownership/reference to the specific geometry containers is still hypothesis-level pending direct linkage evidence.
 - Two non-sentinel link values in the container region are confirmed:
   - `type-2.link_next=350324`
   - `type-13.link_next=349794`

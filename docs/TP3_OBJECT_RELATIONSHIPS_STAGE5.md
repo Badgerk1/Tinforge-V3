@@ -6,33 +6,39 @@ Golden source authority: original professional `Purolator NP 2026.tp3`
 
 ## VERIFIED
 
-1. **surface metadata -> vertex geometry linkage**
+1. **type-17 count fields and count-consistency**
    - Type-17 payload contains `uint32LE` vertex count at absolute offset `433766` (relative `+18`).
    - Value is `53`, matching the verified vertex block (`380120:381392`, `53 * 24` bytes).
-
-2. **surface metadata -> triangle geometry linkage**
    - Type-17 payload contains `uint32LE` triangle count at absolute offset `433770` (relative `+22`).
    - Value is `76`, matching type-14 `record_count=76` and the verified triangle block (`431906:433730`, `76 * 24` bytes).
 
-3. **type-17 payload anchors**
+2. **type-17 payload anchors**
    - Type-17 header at `433730`, payload start `433748`, payload size `332`.
    - UTF-16LE surface name `design grade` starts at absolute `433778` (relative `+30`) inside this payload.
    - Candidate doubles are at absolute `433908` / `433916` (relative `+160` / `+168`) inside this payload.
 
-4. **18-byte container header structure**
+3. **18-byte container header structure**
    - Surface-region chain remains reproducibly decodable as `<HHHHHii>` with `header_size=18`.
    - Type-14 payload still byte-identical to the verified triangle block.
 
 ## SUPPORTED HYPOTHESIS
 
-1. **container link fields as cross-region references**
+1. **surface metadata -> vertex geometry ownership/linkage**
+   - Current evidence proves count consistency only (`type-17 vertex_count=53` and verified vertex block has `53` records).
+   - No explicit type-17 pointer/reference proving ownership of that specific vertex container has been isolated yet.
+
+2. **surface metadata -> triangle geometry ownership/linkage**
+   - Current evidence proves count consistency only (`type-17 triangle_count=76` and type-14 has `76` verified triangle records).
+   - No explicit type-17 pointer/reference proving type-14 ownership/linkage has been isolated yet.
+
+3. **container link fields as cross-region references**
    - Non-sentinel link values in the surface-region chain:
      - `type-2.link_next = 350324`
      - `type-13.link_next = 349794`
    - Both are in file bounds and both point before the Stage-4 surface-region start offset (`374918`).
    - These are plausible cross-region object-directory/table references, but target semantics remain unproven.
 
-2. **candidate origin/localization fields**
+4. **candidate origin/localization fields**
    - `float64LE @ 433908 = 295399.97869873`
    - `float64LE @ 433916 = 4843987.442024235`
    - Placement inside type-17 metadata and numeric plausibility support origin/localization semantics, but proof is still incomplete.
