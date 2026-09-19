@@ -27,6 +27,9 @@ def test_triangle_record_serialization_is_deterministic(tiny_surface: SurfaceTIN
 
 
 def test_parse_triangle_records_rejects_truncated_input():
+    with pytest.raises(ValueError, match="at least one record"):
+        parse_triangle_records(b"", vertex_count=1)
+
     with pytest.raises(ValueError, match="truncated"):
         parse_triangle_records(
             b"\x00" * (TRIANGLE_RECORD_STRUCT.size - 1),

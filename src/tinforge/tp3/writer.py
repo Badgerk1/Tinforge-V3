@@ -60,6 +60,8 @@ def parse_triangle_records(
     *,
     vertex_count: int,
 ) -> tuple[TP3TriangleRecord, ...]:
+    if not data:
+        raise ValueError("triangle record buffer must contain at least one record")
     if len(data) % TRIANGLE_RECORD_STRUCT.size != 0:
         raise ValueError("triangle record buffer is truncated")
     records = tuple(
