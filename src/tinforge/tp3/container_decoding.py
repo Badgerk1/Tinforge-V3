@@ -86,6 +86,10 @@ def decode_surface_region_containers(
     while offset < len(data):
         header = decode_container_header(data, offset)
         headers.append(header)
+        if header.payload_end_offset <= offset:
+            raise TINValidationError(
+                f"container header at {offset} does not advance decode offset"
+            )
         offset = header.payload_end_offset
 
     if offset != len(data):
