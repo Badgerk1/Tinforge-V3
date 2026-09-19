@@ -82,7 +82,27 @@ Counts/metadata checks from original bytes:
 
 The two doubles above are currently classified as **SUPPORTED HYPOTHESIS** for surface/project origin semantics; the structural relationship is not yet proven strongly enough to mark VERIFIED.
 
+## Stage 4 independent container-chain reconstruction — 2026-09-19
+Using the original professional `Purolator NP 2026.tp3` bytes (SHA-256 verified before analysis), the surface-region tail of the file is now reproducibly decoded as a contiguous container chain.
+
+- From offset `374918` to EOF (`446650`), records decode with an 18-byte header struct: `<HHHHHii>`.
+- For each record in this chain, the second `u16` equals `18`.
+- Payload starts at `offset + 18` and payload byte length equals `record_count * record_size` (`u16 #4 * u16 #5`).
+- The next header starts exactly at each payload end, and the final record ends exactly at EOF.
+- Verified record sequence (type IDs): `2,6,7,8,9,10,5,11,13,12,15,14,17,21`.
+
+Verified linkage to Stage 3 surface structures:
+
+- Type `14` header at `431888` has `record_count=76`, `record_size=24`; payload starts at `431906` and exactly equals the verified triangle block.
+- Type `17` header at `433730` has `record_count=1`, `record_size=332`; payload contains:
+  - `uint32LE @ 433766 == 53`
+  - `uint32LE @ 433770 == 76`
+  - UTF-16LE `design grade` at `433778`
+  - doubles at `433908` / `433916` (semantics still hypothesis-level)
+
+These structural/container findings are now VERIFIED for byte layout and boundaries; semantic labels for several fields remain UNKNOWN.
+
 ## Open questions
-- Structural proof of the enclosing TP3 surface/container records around the verified vertex/triangle/count blocks.
 - Definitive semantic proof that doubles at `433908` and `433916` are the actual surface/project origin fields (currently SUPPORTED HYPOTHESIS).
+- Semantic meaning for container header fields beyond the verified structural layout (`u16 #3`, `i32 #1`, `i32 #2`).
 - Remaining unknown TP3 object/link/checksum/table structures required for complete native TP3 serialization.

@@ -85,3 +85,25 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 - Exact enclosing TP3 surface/container record structure outside the verified vertex/triangle/count blocks.
 - Definitive structural proof that doubles at `433908` and `433916` are canonical surface/project origin fields.
 - Remaining TP3 container/object-link/checksum structures required for safe complete native TP3 serialization.
+
+## 2026-09-19 — Stage 4 recovery: TP3 container decoding reconstruction
+### Code changes
+- Added `src/tinforge/tp3/container_decoding.py` with deterministic decoding for 18-byte TP3 container headers (`<HHHHHii`), payload slicing, and contiguous surface-region chain parsing from `374918` to EOF.
+- Added `tests/test_tp3_container_stage4.py` to independently verify container-chain findings from original bytes, including strict header values, contiguity, type-14 triangle payload mapping, and type-17 count/name/origin-candidate containment.
+- Added `docs/TP3_CONTAINER_MAP.md` with reproduced offsets/fields for the full reconstructed surface-region container sequence.
+
+### Evidence/results
+- Original file SHA-256 revalidated before analysis: `423926032d368d2ebce9ffa9acfba3c5e467f200a13b1470d214962b45cb3207`.
+- Verified contiguous container records from `374918` to EOF with type sequence:
+  `2,6,7,8,9,10,5,11,13,12,15,14,17,21`.
+- Verified type-14 header at `431888` encloses exactly `76 * 24` bytes, payload start `431906` (exact triangle table).
+- Verified type-17 header at `433730` encloses a `332`-byte payload containing:
+  - `uint32LE @ 433766 = 53`
+  - `uint32LE @ 433770 = 76`
+  - UTF-16LE `design grade` at `433778`
+  - candidate doubles at `433908` / `433916` (still hypothesis-level semantics).
+
+### Remaining UNKNOWN structures
+- Semantic meaning of container header fields `u16 #3`, `i32 #1`, and `i32 #2`.
+- Definitive semantic proof that doubles at `433908` and `433916` are canonical surface/project origin fields.
+- Remaining TP3 object-link/checksum/table structures required for safe complete native TP3 serialization.
