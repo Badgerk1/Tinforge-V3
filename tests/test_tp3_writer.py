@@ -1,6 +1,6 @@
 import pytest
 
-from tinforge.surface import SurfaceTIN, SurfaceVertex
+from tinforge.surface import SurfaceTIN, SurfaceVertex, TINValidationError
 from tinforge.tp3.writer import (
     TRIANGLE_RECORD_STRUCT,
     UNKNOWN_VERTEX_LAYOUT_EVIDENCE,
@@ -34,15 +34,15 @@ def test_triangle_record_serialization_rejects_empty_surfaces():
         vertices=(SurfaceVertex(x=0.0, y=0.0, z=0.0),),
         triangles=(),
     )
-    with pytest.raises(ValueError, match="at least one triangle"):
+    with pytest.raises(TINValidationError, match="at least one triangle"):
         serialize_triangle_records(empty_surface)
 
 
 def test_parse_triangle_records_rejects_truncated_input():
-    with pytest.raises(ValueError, match="at least one record"):
+    with pytest.raises(TINValidationError, match="at least one record"):
         parse_triangle_records(b"", vertex_count=1)
 
-    with pytest.raises(ValueError, match="truncated"):
+    with pytest.raises(TINValidationError, match="truncated"):
         parse_triangle_records(
             b"\x00" * (TRIANGLE_RECORD_STRUCT.size - 1),
             vertex_count=1,
@@ -51,17 +51,17 @@ def test_parse_triangle_records_rejects_truncated_input():
 
 def test_parse_triangle_records_rejects_invalid_indexes():
     record = TRIANGLE_RECORD_STRUCT.pack(0, 1, 99, -1, -1, -1)
-    with pytest.raises(ValueError, match="invalid vertex 99"):
+    with pytest.raises(TINValidationError, match="invalid vertex 99"):
         parse_triangle_records(record, vertex_count=4)
 
     bad_neighbor = TRIANGLE_RECORD_STRUCT.pack(0, 1, 2, -1, 4, -1)
-    with pytest.raises(ValueError, match="invalid neighbor 4"):
+    with pytest.raises(TINValidationError, match="invalid neighbor 4"):
         parse_triangle_records(bad_neighbor, vertex_count=4)
 
 
 def test_parse_triangle_records_rejects_duplicate_vertex_indexes():
     record = TRIANGLE_RECORD_STRUCT.pack(0, 1, 1, -1, -1, -1)
-    with pytest.raises(ValueError, match="reuses a vertex index"):
+    with pytest.raises(TINValidationError, match="reuses a vertex index"):
         parse_triangle_records(record, vertex_count=4)
 
 
@@ -72,7 +72,7 @@ def test_parse_triangle_records_rejects_invalid_topology():
             TRIANGLE_RECORD_STRUCT.pack(0, 2, 3, 0, -1, -1),
         )
     )
-    with pytest.raises(ValueError, match="missing reciprocal neighbor"):
+    with pytest.raises(TINValidationError, match="missing reciprocal neighbor"):
         parse_triangle_records(data, vertex_count=4)
 
 

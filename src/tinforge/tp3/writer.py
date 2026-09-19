@@ -4,6 +4,7 @@ import struct
 from dataclasses import dataclass
 
 from tinforge.surface import (
+    TINValidationError,
     SurfaceTIN,
     SurfaceTriangle,
     validate_tin,
@@ -65,9 +66,9 @@ def parse_triangle_records(
     vertex_count: int,
 ) -> tuple[TP3TriangleRecord, ...]:
     if not data:
-        raise ValueError("triangle record buffer must contain at least one record")
+        raise TINValidationError("triangle record buffer must contain at least one record")
     if len(data) % TRIANGLE_RECORD_STRUCT.size != 0:
-        raise ValueError("triangle record buffer is truncated")
+        raise TINValidationError("triangle record buffer is truncated")
     records = tuple(
         TP3TriangleRecord(*record)
         for record in TRIANGLE_RECORD_STRUCT.iter_unpack(data)
@@ -77,13 +78,13 @@ def parse_triangle_records(
         vertex_indexes = (record.vertex_0, record.vertex_1, record.vertex_2)
         for vertex_index in vertex_indexes:
             if not 0 <= vertex_index < vertex_count:
-                raise ValueError(
+                raise TINValidationError(
                     f"triangle record {record_index} references invalid vertex {vertex_index}"
                 )
         neighbor_indexes = (record.neighbor_0, record.neighbor_1, record.neighbor_2)
         for neighbor_index in neighbor_indexes:
             if neighbor_index != -1 and not 0 <= neighbor_index < triangle_count:
-                raise ValueError(
+                raise TINValidationError(
                     f"triangle record {record_index} references invalid neighbor {neighbor_index}"
                 )
     validate_triangle_topology(
