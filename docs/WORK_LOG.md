@@ -41,7 +41,7 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 
 ### Tests
 - Added synthetic Stage 2 fixture coverage plus negative regression tests for missing neighbors, wrong neighbors, non-reciprocal neighbors, incorrect-edge neighbors, degenerate/near-degenerate triangles, invalid indexes, malformed triangle-record reparsing, and non-manifold geometry.
-- Full suite result: `python -m pytest -vv` -> 23 passed.
+- Full suite result: `python -m pytest -vv` -> 24 passed.
 
 ### Remaining UNKNOWN TP3 fields
 - Exact surface vertex XYZ storage layout in the golden TP3.

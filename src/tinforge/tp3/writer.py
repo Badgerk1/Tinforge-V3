@@ -48,11 +48,15 @@ class TP3TriangleRecord:
 
 def triangle_records_from_surface(surface: SurfaceTIN) -> tuple[TP3TriangleRecord, ...]:
     validate_tin(surface)
-    return tuple(TP3TriangleRecord.from_triangle(triangle) for triangle in surface.triangles)
+    records = tuple(TP3TriangleRecord.from_triangle(triangle) for triangle in surface.triangles)
+    if not records:
+        raise ValueError("surface must contain at least one triangle record")
+    return records
 
 
 def serialize_triangle_records(surface: SurfaceTIN) -> bytes:
-    return b"".join(record.to_bytes() for record in triangle_records_from_surface(surface))
+    records = triangle_records_from_surface(surface)
+    return b"".join(record.to_bytes() for record in records)
 
 
 def parse_triangle_records(

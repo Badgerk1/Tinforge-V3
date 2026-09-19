@@ -1,6 +1,6 @@
 import pytest
 
-from tinforge.surface import SurfaceTIN
+from tinforge.surface import SurfaceTIN, SurfaceVertex
 from tinforge.tp3.writer import (
     TRIANGLE_RECORD_STRUCT,
     UNKNOWN_VERTEX_LAYOUT_EVIDENCE,
@@ -24,6 +24,18 @@ def test_triangle_record_serialization_is_deterministic(tiny_surface: SurfaceTIN
     first = serialize_triangle_records(tiny_surface)
     second = serialize_triangle_records(tiny_surface)
     assert first == second
+
+
+def test_triangle_record_serialization_rejects_empty_surfaces():
+    empty_surface = SurfaceTIN(
+        name="empty",
+        origin_x=0.0,
+        origin_y=0.0,
+        vertices=(SurfaceVertex(x=0.0, y=0.0, z=0.0),),
+        triangles=(),
+    )
+    with pytest.raises(ValueError, match="at least one triangle"):
+        serialize_triangle_records(empty_surface)
 
 
 def test_parse_triangle_records_rejects_truncated_input():
