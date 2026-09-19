@@ -93,6 +93,33 @@ def test_triangle_container_payload_matches_verified_triangle_block(
     ]
 
 
+def test_type2_payload_contains_vertex_block_as_final_53_records(
+    original_professional_tp3_bytes: bytes,
+):
+    assert hashlib.sha256(original_professional_tp3_bytes).hexdigest() == EXPECTED_FILE_SHA256
+
+    type2_header = decode_container_header(original_professional_tp3_bytes, 374918)
+    assert type2_header.object_type == 2
+    assert type2_header.offset == 374918
+    assert type2_header.payload_offset == 374936
+    assert type2_header.payload_end_offset == 381392
+    assert type2_header.record_count == 269
+    assert type2_header.record_size_bytes == 24
+    assert type2_header.payload_size == 269 * 24
+
+    payload = slice_container_payload(original_professional_tp3_bytes, type2_header)
+    assert len(payload) == 269 * 24
+
+    vertex_block = original_professional_tp3_bytes[380120:381392]
+    assert len(vertex_block) == 53 * 24
+
+    first_vertex_record_index = (380120 - type2_header.payload_offset) // 24
+    assert first_vertex_record_index == 216
+    assert payload[216 * 24 : 269 * 24] == vertex_block
+    assert payload[216 * 24 : 269 * 24] == payload[-53 * 24 :]
+    assert 216 + 53 - 1 == 268
+
+
 def test_count_name_and_origin_candidates_are_inside_type17_payload(
     original_professional_tp3_bytes: bytes,
 ):
