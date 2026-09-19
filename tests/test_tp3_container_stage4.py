@@ -127,3 +127,13 @@ def test_decode_container_header_rejects_invalid_header_size(
 
     with pytest.raises(TINValidationError, match="unsupported header size"):
         decode_container_header(bytes(tampered), SURFACE_REGION_START_OFFSET)
+
+
+def test_decode_surface_region_containers_rejects_out_of_bounds_start_offset(
+    original_professional_tp3_bytes: bytes,
+):
+    with pytest.raises(TINValidationError, match="outside TP3 bounds"):
+        decode_surface_region_containers(
+            original_professional_tp3_bytes,
+            start_offset=len(original_professional_tp3_bytes),
+        )
