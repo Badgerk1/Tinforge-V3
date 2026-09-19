@@ -36,22 +36,41 @@ triangle 3: vertices [9,10,11] neighbors [18,4,17]
 triangle 4: vertices [10,12,11] neighbors [21,-1,3]
 ```
 
-## VERIFIED: nearby coordinate triple
+## VERIFIED: surface vertex block
 
-At byte offset **431844**, three consecutive little-endian IEEE-754 float64 values decode to:
+A contiguous vertex table begins at byte offset **380120** and occupies exactly **1272 bytes**.
+
+It decodes as **53 records x 24 bytes**, where each record is three little-endian IEEE-754 float64 values:
+
+`local_x, local_y, elevation_z`
+
+Validation:
+
+- the 53 decoded records align exactly with the verified 53-vertex count near the surface name;
+- local X spans `-56.881774900015444 .. 56.881774900015444`;
+- local Y spans `-77.34722137451172 .. 77.34722137544304`;
+- elevation Z spans `168.65 .. 171.25`;
+- when indexed through the verified 76-triangle table, the reconstructed mesh has no zero-area triangles and satisfies reciprocal adjacency/boundary expectations.
+
+Examples:
 
 ```text
-4843976.009
-295334.679
-170.621
+vertex 0:  (29.948791500006337, -44.49799347482622, 170.45)
+vertex 1:  (28.356750489969272, -54.3188858050853, 170.2)
+vertex 52: (47.70098876999691, 62.317619315348566, 170.5)
 ```
 
-These are geographically/plausibly shaped as northing/easting/elevation values for the project. Their exact semantic role is not yet proven; they are therefore **not** labeled as a surface vertex.
+## VERIFIED: stored local-origin doubles
 
-## Current unknown
+Two consecutive little-endian float64 values at byte offsets **433908** and **433916** decode to:
 
-The 53 XYZ vertex payloads have not yet been proven. They may be stored in another record table or encoded through an indirect/delta representation. The parser must not invent a vertex layout until that relationship is demonstrated.
+```text
+295399.97869873
+4843987.442024235
+```
 
-## Next decoding target
+Adding the verified local XY vertex coordinates to those values yields plausible project easting/northing extents `295343.09692383 .. 295456.86047363` and `4843910.09480286 .. 4844064.78924561`. For this golden surface, the evidence now supports treating those doubles as the stored local-origin coordinates.
 
-Locate the vertex payload referenced by IDs 0..52 and prove XYZ values against source design geometry. Once proven, add topology reciprocity tests and coordinate/elevation tolerance tests.
+## Remaining unknown
+
+The exact enclosing surface/container structure around the verified vertex table, triangle table, count fields and origin doubles still needs to be mapped before any full native TP3 writer can be considered safe.

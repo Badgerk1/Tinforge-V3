@@ -33,7 +33,26 @@ Example first records:
 
 Confidence: VERIFIED for record boundaries, counts, integer layout, vertex-index interpretation and neighbor-index interpretation. The exact edge-to-neighbor ordering should still be tested geometrically once XYZ coordinates are decoded.
 
-Two plausible project/surface coordinate doubles also occur in surface metadata after the topology table/name: approximately E=295399.97869873 and N=4843987.442024235. Their exact semantic role is not yet proven, so they remain STRONG/HYPOTHESIS rather than production serialization facts.
+## Verified surface vertex block discovery — 2026-09-19
+The professional file contains a contiguous 53-record vertex block beginning at byte offset 380120.
+
+Each record is 24 bytes and decodes as three little-endian IEEE-754 float64 values:
+
+`local_x, local_y, elevation_z`
+
+Validation across all 53 records:
+- offsets 380120..381391 contain exactly `53 × 24 = 1272` bytes
+- decoded local X values span `-56.881774900015444 .. 56.881774900015444`
+- decoded local Y values span `-77.34722137451172 .. 77.34722137544304`
+- decoded elevation Z values span `168.65 .. 171.25`
+- when indexed by the verified triangle table, the reconstructed mesh has no zero-area triangles and satisfies reciprocal adjacency/boundary expectations
+
+Verified examples:
+- vertex 0: `(29.948791500006337, -44.49799347482622, 170.45)`
+- vertex 1: `(28.356750489969272, -54.3188858050853, 170.2)`
+- vertex 52: `(47.70098876999691, 62.317619315348566, 170.5)`
+
+Two little-endian float64 values at byte offsets 433908 and 433916 decode to `295399.97869873` and `4843987.442024235`. Adding the local XY values above yields plausible project easting/northing extents `295343.09692383 .. 295456.86047363` and `4843910.09480286 .. 4844064.78924561`. For this golden file, the evidence now supports treating those doubles as the stored surface/project origin used by the decoded local XY vertex coordinates.
 
 ## Reverse-engineering method
 1. Preserve an untouched hash-identified copy.
@@ -60,4 +79,4 @@ B) Verified civil interchange (LandXML/MAXML where supported) followed by a veri
 Both require post-export validation.
 
 ## Open questions
-The major next target is the 53-entry XYZ coordinate storage referenced by the now-verified topology table. After XYZ is mapped, validate triangle geometry, neighbor edge ordering, surface bounds/elevation range, then continue with CRS/localization representation, breaklines/boundaries, layers/features, checksums/object IDs/cross-reference tables, compatibility among Pocket3D/3D-MC/MC-X versions, and safe LandXML/MAXML round-trip behavior.
+The major next target is the exact surrounding surface/container record structure beyond the now-verified vertex block, origin doubles, count fields and triangle table. Continue with CRS/localization representation, breaklines/boundaries, layers/features, checksums/object IDs/cross-reference tables, compatibility among Pocket3D/3D-MC/MC-X versions, and safe LandXML/MAXML round-trip behavior.

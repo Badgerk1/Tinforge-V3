@@ -47,3 +47,20 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 - Exact surface vertex XYZ storage layout in the golden TP3.
 - Exact enclosing surface/container record boundaries and byte layout around the verified triangle table.
 - Exact semantic mapping for surrounding TP3 metadata needed before a complete native TP3 file can be emitted safely.
+
+## 2026-09-19 — Stage 3 surface decoding analysis
+### Code changes
+- Added `src/tinforge/tp3/surface_decoder.py` to decode the verified golden `design grade` surface from raw TP3 bytes or a sliced byte window using exact absolute offsets plus bounds checks.
+- Added `tools/tp3_surface_dump.py` and exported the decoder from `src/tinforge/tp3/__init__.py` for reproducible binary-analysis dumps.
+- Added `tests/test_tp3_surface_stage3.py` plus the derived evidence fixture `tests/fixtures/golden/Purolator_NP_2026.design_grade_surface.json`, which captures the verified offsets, decoded vertices, decoded triangle topology, and verified bounds needed to reconstruct the golden surface window in tests.
+
+### Verified binary findings
+- The golden `design grade` vertex block begins at byte offset `380120` and contains `53` records of `24` bytes each.
+- Each vertex record is three little-endian float64 values interpreted as `local_x`, `local_y`, and `elevation_z`.
+- Surface/project origin doubles appear at byte offsets `433908` and `433916` with values `295399.97869873` and `4843987.442024235`.
+- Reconstructing the surface from the verified vertex block plus the verified 76-record triangle table yields a valid TIN with reciprocal adjacency and no zero-area triangles.
+
+### Remaining UNKNOWN TP3 fields
+- Exact enclosing container record boundaries and semantic meaning of the bytes surrounding the verified surface block.
+- CRS/localization representation beyond the decoded local-origin relationship.
+- Remaining project/layer/feature/checksum/object-ID structures required for a complete native TP3 writer.

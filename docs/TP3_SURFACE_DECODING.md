@@ -17,13 +17,21 @@ Offsets (zero-based):
 
 This is direct binary evidence tying the previously reported 53-vertex / 76-triangle counts to the `design grade` surface record. These values are no longer merely prior observations.
 
-## Nearby topology evidence
+## Verified topology evidence
 
-The bytes immediately preceding the surface header contain long runs of small integer values plus `0xFFFF` sentinels. The values are consistent with index/topology data, but their exact field semantics and record width are not yet proven. Do not label these as triangle connectivity until the parser reproduces all 76 triangles and all references validate against the 53-vertex set.
+The bytes beginning at decimal offset `431906` decode as exactly `76 × 24-byte` triangle records:
 
-## Coordinate evidence
+`vertex_0, vertex_1, vertex_2, neighbor_0, neighbor_1, neighbor_2`
 
-A nearby region beginning around decimal offset 426880 contains repeated IEEE-754 little-endian doubles in realistic project-coordinate ranges, including northings around 4,844,234 and eastings around 295,315. The surrounding bytes are structured and repeat, but the complete XYZ record layout is not yet proven.
+All triangle references validate against the 53-vertex set, neighbor indexes remain in `-1..75`, and reciprocal adjacency has been reproduced in automated tests.
+
+## Verified coordinate evidence
+
+A contiguous region beginning at decimal offset `380120` decodes as exactly `53 × 24-byte` vertex records, each three little-endian float64 values:
+
+`local_x, local_y, elevation_z`
+
+The reconstructed surface uses local XY values around the stored origin doubles at offsets `433908` and `433916`, yielding plausible project easting/northing extents and a valid 76-triangle TIN with no zero-area triangles.
 
 ## Acceptance gate for Stage 1
 
@@ -36,4 +44,4 @@ Stage 1 surface decoding is complete only when code can deterministically:
 5. reject truncated/corrupt variants safely; and
 6. reproduce these facts in automated golden-file tests.
 
-Current status: **in progress**. The surface count anchor is verified; vertex and topology record layouts remain under investigation.
+Current status: **surface geometry and topology decoded for the golden `design grade` surface**. Remaining work is the enclosing TP3 container/metadata structure needed for broader parser/export coverage.
