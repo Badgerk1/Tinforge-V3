@@ -107,3 +107,29 @@ Append dated entries with evidence, code changes, exact tests/results, failures,
 - Semantic meaning of container header fields `u16 #3`, `i32 #1`, and `i32 #2`.
 - Definitive semantic proof that doubles at `433908` and `433916` are canonical surface/project origin fields.
 - Remaining TP3 object-link/checksum/table structures required for safe complete native TP3 serialization.
+
+## 2026-09-19 — Stage 5 object linkage + metadata semantics
+### Code changes
+- Added `src/tinforge/tp3/object_relationships.py` to analyze Stage-4 container chain relationships with explicit confidence labels (`VERIFIED`, `SUPPORTED HYPOTHESIS`, `UNKNOWN`, `REJECTED HYPOTHESIS`).
+- Added `tests/test_tp3_object_relationships_stage5.py` to verify:
+  - strict golden SHA-256 identity gate;
+  - type-17 metadata linkage to verified vertex/triangle geometry counts;
+  - non-sentinel link-field discovery (`350324`, `349794`) and cross-region candidate properties;
+  - required confidence-label coverage for Stage-5 findings.
+- Added `docs/TP3_OBJECT_RELATIONSHIPS_STAGE5.md` with classified findings and required next evidence.
+- Updated `docs/TP3_RESEARCH.md` and `docs/TP3_CONTAINER_MAP.md` with Stage-5 differential conclusions.
+
+### Evidence/results
+- Metadata linkage now explicitly proven from bytes:
+  - type-17 `vertex_count=53` matches verified vertex block count;
+  - type-17 `triangle_count=76` matches verified type-14/triangle block count.
+- Two non-sentinel link values in the container region are confirmed:
+  - `type-2.link_next=350324`
+  - `type-13.link_next=349794`
+  Both point before `374918`, supporting a cross-region directory/link hypothesis without over-claiming semantics.
+- Rejected hypothesis documented: surface name is not outside type-17 payload.
+
+### Remaining UNKNOWN structures
+- Meaning of `field_2` and full semantics of link fields in 18-byte headers.
+- Definitive target structures for link values `350324` / `349794`.
+- Remaining type-17 bytes and global TP3 object/link/table semantics required for complete native writer.

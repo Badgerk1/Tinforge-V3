@@ -52,3 +52,12 @@ Verified records:
 - Full object graph semantics between type IDs (2,5,6,...,21).
 - Definitive semantic role of candidate doubles at `433908` / `433916` (still SUPPORTED HYPOTHESIS).
 - Any additional TP3 structures before `374918` that may participate in global container/object linking.
+
+## Stage 5 differential note on link fields
+
+From the verified container list above, only two non-sentinel link values are present:
+
+- type-2 `link_next = 350324`
+- type-13 `link_next = 349794`
+
+Both are in-file and both are less than `374918` (the verified surface-region chain start), so they are treated as **SUPPORTED HYPOTHESIS** candidates for cross-region object-directory/table references. Their exact targets and semantics remain **UNKNOWN**.

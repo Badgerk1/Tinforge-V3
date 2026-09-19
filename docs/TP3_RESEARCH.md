@@ -106,3 +106,28 @@ These structural/container findings are now VERIFIED for byte layout and boundar
 - Definitive semantic proof that doubles at `433908` and `433916` are the actual surface/project origin fields (currently SUPPORTED HYPOTHESIS).
 - Semantic meaning for container header fields beyond the verified structural layout (`u16 #3`, `i32 #1`, `i32 #2`).
 - Remaining unknown TP3 object/link/checksum/table structures required for complete native TP3 serialization.
+
+## Stage 5 object relationships + metadata semantics — 2026-09-19
+Using the same original professional binary (SHA-256 verified before analysis), Stage 5 adds object-linkage-focused assertions and confidence classifications.
+
+### VERIFIED
+- Type-17 payload anchors are stable: vertex count (`@433766`), triangle count (`@433770`), surface name `design grade` (`@433778`) are inside the 332-byte type-17 payload.
+- Metadata-to-geometry linkage is now explicitly asserted:
+  - type-17 vertex count (`53`) matches the verified vertex block record count (`53`).
+  - type-17 triangle count (`76`) matches type-14 triangle record count (`76`) and the verified triangle block.
+- Type-14 payload remains byte-identical to the verified triangle block.
+
+### SUPPORTED HYPOTHESIS
+- Non-sentinel container link fields in the surface-region chain:
+  - `type-2.link_next = 350324`
+  - `type-13.link_next = 349794`
+  Both values are in file bounds and both point before the surface-region start (`374918`), supporting (but not proving) cross-region directory/object-link semantics.
+- Candidate doubles at `433908` / `433916` remain SUPPORTED HYPOTHESIS for origin/localization semantics.
+
+### UNKNOWN
+- Definitive semantics of container `field_2` and link directionality/meaning.
+- Verified structure and semantics of any pre-`374918` object directory/table region referenced by non-sentinel links.
+- Full verified type-17 byte map beyond currently anchored count/name/candidate-origin fields.
+
+### REJECTED HYPOTHESIS
+- "Surface name is outside type-17 payload." Rejected: the UTF-16LE bytes are inside payload range `433748:434080`.
